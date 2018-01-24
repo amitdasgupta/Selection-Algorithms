@@ -1,59 +1,96 @@
 #include <iostream>
 #include<string>
 using namespace std;
-/*********************tournament method to find minimum and maximum element in an array
-struct value{
-int min;
-int max;
-};
 
-value returnMinMax(int *arr,int start,int last)
+class Bst{
+/****************tree defination*/////////////////////////
+public:
+    int data;
+    Bst* left;
+    Bst* right;
+    Bst(int data)
+    {
+        this->data=data;
+        this->left=NULL;
+        this->right=NULL;
+    }
+};
+/********************function for inserting into tree*///////////////////////////
+void insertIntoBinaryTree(Bst* &root,int data)
 {
-    value v;
-    cout<<start<< " "<<last<<endl;
-    if(start==last)
+    if(!root||root->data==data)
     {
-        v.max=arr[start];
-        v.min=v.max;
-        return v;
-    }
+        root=new Bst(data);
+    }else
+    if(data<root->data)
+       insertIntoBinaryTree(root->left,data);
     else
-        if(last==start+1)
-    {
-        if(arr[start]>arr[last])
-        {
-            v.max=arr[start];
-            v.min=arr[last];
-        }
-        else
-            {
-            v.max=arr[last];
-            v.min=arr[start];
-        }
-         return v;
-    }
-    else
-    {    int mid=(last+start)/2;
-        value left=returnMinMax(arr,start,mid);
-        value right=returnMinMax(arr,mid+1,last);
-        if(left.min<right.min)
-            v.min=left.min;
-        else
-            v.min=right.min;
-        if(left.max<right.max)
-            v.max=right.max;
-        else
-            v.max=left.max;
-            return v;
-    }
+      insertIntoBinaryTree(root->right,data);
+
+
 }
-*//////////
-/*********problem to find the kth smallest element in an array*//////
-void swapValues(int * &arr,int i,int j)
+/*************************************code for finding maximum element in bst*/////////////////////
+Bst* findMaxNodeInBst(Bst* root)
 {
-    int temp=arr[i];
-    arr[i]=arr[j];
-    arr[j]=temp;
+    if(!root->right)
+        return root;
+    else
+        return findMaxNodeInBst(root->right);
+}
+/******************code to delete an element in an bst*/////////
+void deleteNodeInBst(Bst* &root,int data)
+{
+    if(!root)
+        return;
+    else
+        if(!root->left&&!root->right)
+    {
+        if(root->data==data)
+       {
+            free(root);
+        root=NULL;
+       }
+       return;
+    }
+    else
+        if(root->data==data)
+        {
+            if(root->left&&root->right)
+            {
+                Bst* maxleft=findMaxNodeInBst(root->left);
+                root->data=maxleft->data;
+                deleteNodeInBst(root->left,maxleft->data);
+            }
+            else
+            {
+                Bst* temp=root;
+                if(!root->right)
+                {
+                    root=root->left;
+                    free(temp);
+                }
+                else
+                     if(!root->left)
+                {
+                    root=root->right;
+                    free(temp);
+                }
+            }
+
+        }
+        else
+        {
+            deleteNodeInBst(root->left,data);
+            deleteNodeInBst(root->right,data);
+        }
+}
+void inOrderTraversal(Bst* root)
+{
+    if(!root)
+        return;
+    inOrderTraversal(root->left);
+    cout<<root->data<<" ";
+    inOrderTraversal(root->right);
 }
 int main()
 {
@@ -63,23 +100,23 @@ int main()
     arr=new int[n]();
     for(int i=0;i<n;i++)
         cin>>arr[i];
-     int min;
-    for(int i=0;i<k;i++)
-     {
-         min=i;
-         for(int j=i+1;j<n;j++)
-         {
-             if(arr[j]<arr[min])
-                min=j;
-            cout<<min<<endl;
-         }
-         if(min!=i)
-         {
-             swapValues(arr,i,min);
-         }
-     }
-     cout<<arr[k-1];
-     return 0;
+    Bst *root,*max;
+    root=new Bst(arr[0]);
+    for(int i=1;i<k;i++)
+        insertIntoBinaryTree(root,arr[i]);
+  //  inOrderTraversal(root);
+    for(int i=k;i<n;i++)
+    {
+        max=findMaxNodeInBst(root);
+        if(arr[i]<max->data)
+        {    //cout<<arr[i]<<endl;
+            deleteNodeInBst(root,max->data);
+            insertIntoBinaryTree(root,arr[i]);
+        }
+    }
+    cout<<findMaxNodeInBst(root)->data;
+    delete[] arr;
+    return 0;
 }
 
 
