@@ -1,7 +1,7 @@
 #include <iostream>
-
+#include<string>
 using namespace std;
-/*********************tournament method to find minimum and maximum element in an array*//////////
+/*********************tournament method to find minimum and maximum element in an array
 struct value{
 int min;
 int max;
@@ -47,15 +47,50 @@ value returnMinMax(int *arr,int start,int last)
             return v;
     }
 }
-
+*//////////
+/*********problem to find the kth smallest element in an array*//////
+void swapValues(int * &arr,int i,int j)
+{
+    int temp=arr[i];
+    arr[i]=arr[j];
+    arr[j]=temp;
+}
 int main()
 {
-    int *arr,n;
-    cin>>n;
-    arr=new int[n];
+
+    int *arr,n,k;
+    cin>>n>>k;
+    arr=new int[n]();
     for(int i=0;i<n;i++)
         cin>>arr[i];
-     value v=returnMinMax(arr,0,n-1);
-     cout<<v.min<<" "<<v.max;
-    return 0;
+     int min;
+    for(int i=0;i<k;i++)
+     {
+         min=i;
+         for(int j=i+1;j<n;j++)
+         {
+             if(arr[j]<arr[min])
+                min=j;
+            cout<<min<<endl;
+         }
+         if(min!=i)
+         {
+             swapValues(arr,i,min);
+         }
+     }
+     cout<<arr[k-1];
+     return 0;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
